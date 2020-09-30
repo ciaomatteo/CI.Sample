@@ -3,7 +3,7 @@
 param
 (
     [string]$Solution, #Logical name  crm solution
-    [string]$Version, #Optional target version for solution
+    [string]$TargetVersion, #Optional target version for solution
     [switch]$Unmanaged, #Optional parameter for unmanaged solution
     [string]$CrmConnectionString, #The connection string as per CRM Sdk
 	[string]$Key, #The key for the stored connection string
@@ -25,13 +25,13 @@ else
 	throw "No solution supplied"
 }
 
-if ($Version)
+if ($TargetVersion)
 {
-    Write-Verbose "Using Version: $Version"
+    Write-Verbose "Using TargetVersion: $TargetVersion"
 }
 else
 {
-	Write-Verbose "No version supplied. Keep existing solution version."
+	Write-Verbose "No target version supplied. Keep existing solution version."
 }
 
 #Script Location
@@ -77,14 +77,14 @@ else
 	$CrmConnectionString = GetXrmConnectionFromConfig($key);
 }
 
-if ($Version)
+if ($TargetVersion)
 {
     $exportParams = @{
         CrmConnectionString = "$CrmConnectionString"
         SolutionName = "$Solution"
         ExportManaged = $true
         ExportUnmanaged = $true
-        RequiredVersion = "$Version"
+        RequiredVersion = "$TargetVersion"
         UpdateVersion = $true
         ExportIncludeVersionInSolutionName = $false
         ExportSolutionOutputPath = "$env:TEMP"
