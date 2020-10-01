@@ -7,10 +7,10 @@ param
     [switch]$Unmanaged, #Optional parameter for unmanaged solution
     [string]$CrmConnectionString, #The connection string as per CRM Sdk
 	[string]$Key, #The key for the stored connection string
-    [bool]$Async, #Export async (recommended, but only available in newer instances)
-    [string]$TenantId, #Needed by SolutionChecker
-    [string]$ApplicationId, #Needed by SolutionChecker
-    [string]$ApplicationSecret #Needed by SolutionChecker
+    [bool]$Async, #Optional export async (recommended, but only available in newer instances)
+    [string]$TenantId, #Optional parameter for SolutionChecker
+    [string]$ApplicationId, #Optional parameter for SolutionChecker
+    [string]$ApplicationSecret #Optional parameter for SolutionChecker
 )
 
 $ErrorActionPreference = "Stop"
