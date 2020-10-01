@@ -1,5 +1,3 @@
-
-## https://vanbrenk.blogspot.com/2017/09/install-module-unable-to-resolve.html
 [Net.ServicePointManager]::SecurityProtocol = "tls12"
 
 $sourceNugetExe = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
