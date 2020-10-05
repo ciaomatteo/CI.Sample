@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PluginAssembly FullName="Sample.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c720feec9a542abf" PluginAssemblyId="ca8e9d63-f85c-4f01-96ef-67edb4336337" CustomizationLevel="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsolationMode>2</IsolationMode>
+  <SourceType>0</SourceType>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <FileName>/PluginAssemblies/SamplePlugins-CA8E9D63-F85C-4F01-96EF-67EDB4336337/SamplePlugins.dll</FileName>
+  <PluginTypes>
+    <PluginType AssemblyQualifiedName="Sample.Plugins.AccountPostCreateAsync, Sample.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c720feec9a542abf" PluginTypeId="be020891-4113-43e8-9603-12103fa5a3ab" Name="Sample.Plugins.AccountPostCreateAsync">
+      <FriendlyName>b187e9c5-3bcb-44ee-8b87-875911158161</FriendlyName>
+    </PluginType>
+    <PluginType AssemblyQualifiedName="Sample.Plugins.ContactPostCreateAsync, Sample.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c720feec9a542abf" PluginTypeId="8342a7e6-250f-4068-8821-6aa110d7751b" Name="Sample.Plugins.ContactPostCreateAsync">
+      <FriendlyName>c928abfc-6142-4ad6-9861-d3f21017b302</FriendlyName>
+    </PluginType>
+    <PluginType AssemblyQualifiedName="Sample.Plugins.ContactPreOperation, Sample.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c720feec9a542abf" PluginTypeId="bd350068-0e98-4358-8c48-ff171a59979d" Name="Sample.Plugins.ContactPreOperation">
+      <FriendlyName>060a1b36-6f38-4026-a232-26bde5752aad</FriendlyName>
+    </PluginType>
+  </PluginTypes>
+</PluginAssembly>

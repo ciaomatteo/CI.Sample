@@ -1,0 +1,7 @@
+<entities >
+  <entity name="account" displayname="Account" etc="1" primaryidfield="accountid" primarynamefield="name" disableplugins="false">
+    <fields>
+      <field displayname="Account Name" name="name" type="string" />
+    </fields>
+  </entity>
+</entities>
