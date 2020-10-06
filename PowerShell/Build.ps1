@@ -161,6 +161,10 @@ else
 
 if ($TenantId -and $ApplicationId -and $ApplicationSecret)
 {
+    if (!(Test-Path "$scriptPath\CheckerResults" -PathType Container)) {
+        New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults"
+    }
+
     $matches = Get-ChildItem -Path "$scriptPath\Package\PkgFolder" -Filter *.zip | ForEach-Object {
         if ($Unmanaged)
         {

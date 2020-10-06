@@ -20,10 +20,6 @@ $XmlDocument.configdatastorage.solutions.configsolutionfile.SetAttribute("soluti
 $XmlDocument.configdatastorage.SetAttribute("crmmigdataimportfile", "")
 $XmlDocument.Save($XmlDocumentLoction)
 
-if (!(Test-Path "$scriptPath\CheckerResults" -PathType Container)) {
-    New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults"
-}
-
 $matches = Get-ChildItem -Path "$scriptPath\Package\PkgFolder" -Filter *.zip | ForEach-Object {
     Remove-Item $_.FullName
 }
