@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mapping>
 
-  <FileToFile map="SamplePlugins.dll" to="..\..\Sample.Plugins\bin\Debug\Sample.Plugins.dll" />
-  <FileToFile map="SampleWFActivities.dll" to="..\..\Sample.WFActivities\bin\Debug\Sample.WFActivities.dll" />
+  <!-- <FileToFile map="Plugins.dll" to="..\..\Plugins\bin\Release\Plugins.dll" /> -->
+  <!-- <FileToFile map="Workflow.dll" to="..\..\Workflows\bin\Release\Workflows.dll" /> -->
 
-  <FileToPath map="WebResources\*.*" to="..\..\Sample.WebResources\WebResources\**" />
-  <FileToPath map="WebResources\**\*.*" to="..\..\Sample.WebResources\WebResources\**" />
+  <!-- <FileToPath map="WebResources\*.*" to="..\..\WebResources\**" /> -->
+  <!-- <FileToPath map="WebResources\**\*.*" to="..\..\WebResources\**" /> -->
 
 </Mapping>

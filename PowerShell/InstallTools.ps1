@@ -58,7 +58,8 @@ Remove-Item .\Tools\$xrmCIFolder -Force -Recurse
 Remove-Item nuget.exe
 
 ## PSGallery should be available
-Get-PackageSource
+$PSVersionTable.PSVersion
+Install-PackageProvider -Name NuGet -Force
 
 Save-Package "microsoft.xrm.tooling.crmconnector.powershell" -Path .\Tools
 Save-Package "microsoft.xrm.tooling.packagedeployment.powershell" -Path .\Tools

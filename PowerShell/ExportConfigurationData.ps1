@@ -17,7 +17,12 @@ Write-Verbose "ConnectionString = $CrmConnectionString"
 Write-Verbose "Key = $Key"
 
 #Variables
+$dataFileName = "data.zip"
 $DataFile = "$env:TEMP\configuration_data_$(get-date -f yyyyMMdd-HHmmss).zip"
+$XmlDocumentLoction = "$scriptPath\Package\PkgFolder\ImportConfig.xml"
+[xml]$XmlDocument = Get-Content -Path $XmlDocumentLoction
+$XmlDocument.configdatastorage.SetAttribute("crmmigdataimportfile", "")
+$XmlDocument.Save($XmlDocumentLoction)
 
 Write-Verbose "ConnectionString = $connectionString"
 
@@ -91,6 +96,17 @@ if (Test-Path -Path "$scriptPath\Schema.xml")
     }
 
     & "$frameworkPath\ExtractCMData.ps1" @extractParams
+
+    $packCMDataParams = @{
+        dataFile = "$scriptPath\Package\PkgFolder\$dataFileName"
+        extractFolder = "$scriptPath\ConfigurationData"
+        combineDataXmlFile = $true
+    }
+
+    & "$frameworkPath\PackCMData.ps1" @packCMDataParams
+
+    $XmlDocument.configdatastorage.SetAttribute("crmmigdataimportfile", $dataFileName)
+    $XmlDocument.Save($XmlDocumentLoction)
 }
 else
 {

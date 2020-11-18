@@ -2,7 +2,7 @@
 
 param
 (
-    [string]$Solution, #Logical name  crm solution
+    [string[]]$Solutions, #Logical name  crm solution
     [string]$TargetVersion, #Optional target version for solution
     [switch]$Unmanaged, #Optional parameter for unmanaged solution
     [string]$CrmConnectionString, #The connection string as per CRM Sdk
@@ -15,9 +15,9 @@ param
 
 $ErrorActionPreference = "Stop"
 
-if ($Solution)
+if ($Solutions)
 {
-    Write-Verbose "Using Solution: $Solution"
+    Write-Verbose "Using Solutions: $Solutions"
 }
 else
 {
@@ -77,86 +77,108 @@ else
 	$CrmConnectionString = GetXrmConnectionFromConfig($key);
 }
 
-if ($TargetVersion)
+#Clean up PkgFolder
+$matches = Get-ChildItem -Path "$scriptPath\Package\PkgFolder" -Filter *.zip | ForEach-Object {
+    Remove-Item $_.FullName
+}
+
+foreach ($Solution in $Solutions)
 {
-    $exportParams = @{
-        CrmConnectionString = "$CrmConnectionString"
-        SolutionName = "$Solution"
-        ExportManaged = $true
-        ExportUnmanaged = $true
-        RequiredVersion = "$TargetVersion"
-        UpdateVersion = $true
-        ExportIncludeVersionInSolutionName = $false
-        ExportSolutionOutputPath = "$env:TEMP"
-        ExportAutoNumberingSettings = $true
-        ExportCalendarSettings = $true
-        ExportCustomizationSettings = $true
-        ExportEmailTrackingSettings = $true
-        ExportExternalApplications = $true
-        ExportGeneralSettings = $true
-        ExportIsvConfig = $true
-        ExportMarketingSettings = $true
-        ExportOutlookSynchronizationSettings = $true
-        ExportRelationshipRoles = $true
-        ExportSales = $true
-        ExportAsync = $Async
-        AsyncWaitTimeout = 360
-        Timeout = 360
+    if ($TargetVersion)
+    {
+        $exportParams = @{
+            CrmConnectionString = "$CrmConnectionString"
+            SolutionName = "$Solution"
+            ExportManaged = $true
+            ExportUnmanaged = $true
+            RequiredVersion = "$TargetVersion"
+            UpdateVersion = $true
+            ExportIncludeVersionInSolutionName = $false
+            ExportSolutionOutputPath = "$env:TEMP"
+            ExportAutoNumberingSettings = $true
+            ExportCalendarSettings = $true
+            ExportCustomizationSettings = $true
+            ExportEmailTrackingSettings = $true
+            ExportExternalApplications = $true
+            ExportGeneralSettings = $true
+            ExportIsvConfig = $true
+            ExportMarketingSettings = $true
+            ExportOutlookSynchronizationSettings = $true
+            ExportRelationshipRoles = $true
+            ExportSales = $true
+            ExportAsync = $Async
+            AsyncWaitTimeout = 600
+            Timeout = 600
+        }
     }
-}
-else
-{
-    $exportParams = @{
-        CrmConnectionString = "$CrmConnectionString"
-        SolutionName = "$Solution"
-        ExportManaged = $true
-        ExportUnmanaged = $true
-        UpdateVersion = $false
-        ExportIncludeVersionInSolutionName = $false
-        ExportSolutionOutputPath = "$env:TEMP"
-        ExportAutoNumberingSettings = $true
-        ExportCalendarSettings = $true
-        ExportCustomizationSettings = $true
-        ExportEmailTrackingSettings = $true
-        ExportExternalApplications = $true
-        ExportGeneralSettings = $true
-        ExportIsvConfig = $true
-        ExportMarketingSettings = $true
-        ExportOutlookSynchronizationSettings = $true
-        ExportRelationshipRoles = $true
-        ExportSales = $true
-        ExportAsync = $Async
-        AsyncWaitTimeout = 360
-        Timeout = 360
+    else
+    {
+        $exportParams = @{
+            CrmConnectionString = "$CrmConnectionString"
+            SolutionName = "$Solution"
+            ExportManaged = $true
+            ExportUnmanaged = $true
+            UpdateVersion = $false
+            ExportIncludeVersionInSolutionName = $false
+            ExportSolutionOutputPath = "$env:TEMP"
+            ExportAutoNumberingSettings = $true
+            ExportCalendarSettings = $true
+            ExportCustomizationSettings = $true
+            ExportEmailTrackingSettings = $true
+            ExportExternalApplications = $true
+            ExportGeneralSettings = $true
+            ExportIsvConfig = $true
+            ExportMarketingSettings = $true
+            ExportOutlookSynchronizationSettings = $true
+            ExportRelationshipRoles = $true
+            ExportSales = $true
+            ExportAsync = $Async
+            AsyncWaitTimeout = 600
+            Timeout = 600
+        }
     }
+
+    & "$frameworkPath\ExportSolution.ps1" @exportParams
+
+    $extractParams = @{
+        UnpackedFilesFolder = "$scriptPath\Customizations\$Solution"
+        mappingFile = "$scriptPath\mapping.xml"
+        PackageType = "Both"
+        solutionName = $Solution
+        connectionString = "$CrmConnectionString"
+        solutionFile = "$env:TEMP\$Solution.zip"
+	    CoreToolsPath = "$scriptPath\Tools\CoreTools"
+        sourceLoc = "$null"
+        localize = $false
+	    TreatUnpackWarningsAsErrors = $false
+    }
+
+    & "$frameworkPath\ExtractSolution.ps1" @extractParams
+
+    $packParams = @{
+        UnpackedFilesFolder = "$scriptPath\Customizations\$Solution"
+        mappingFile = "$scriptPath\mapping.xml"
+        PackageType = "Both"
+        IncrementReleaseVersion = $false
+        OutputPath = "$scriptPath\Package\PkgFolder"
+        sourceLoc = "$null"
+        localize = $false
+        CoreToolsPath = "$scriptPath\Tools\CoreTools"
+	    TreatUnpackWarningsAsErrors = $false
+    }
+
+    & "$frameworkPath\PackSolution.ps1" @packParams
 }
-
- & "$frameworkPath\ExportSolution.ps1" @exportParams
-
-$extractParams = @{
-    UnpackedFilesFolder = "$scriptPath\Customizations"
-    mappingFile = "$scriptPath\mapping.xml"
-    PackageType = "Both"
-    solutionName = $Solution
-    connectionString = "$CrmConnectionString"
-    solutionFile = "$env:TEMP\$Solution.zip"
-	CoreToolsPath = "$scriptPath\Tools\CoreTools"
-    sourceLoc = "$null"
-    localize = $false
-	TreatUnpackWarningsAsErrors = $false
-}
-
-& "$frameworkPath\ExtractSolution.ps1" @extractParams
 
 & .\ExportConfigurationData.ps1 -CrmConnectionString $CrmConnectionString -Key $Key
 
 if ($Unmanaged.IsPresent)
 {
-    & .\PackSolution.ps1 -Unmanaged
+    & .\UpdateConfigFile.ps1 -Unmanaged -Solutions $Solutions
 }
 else
 {
-    & .\PackSolution.ps1
+    & .\UpdateConfigFile.ps1 -Solutions $Solutions
 }
 
 if ($TenantId -and $ApplicationId -and $ApplicationSecret)
@@ -165,36 +187,43 @@ if ($TenantId -and $ApplicationId -and $ApplicationSecret)
         New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults"
     }
 
+    $solutionFileList = New-Object Collections.Generic.List[String]
     $matches = Get-ChildItem -Path "$scriptPath\Package\PkgFolder" -Filter *.zip | ForEach-Object {
         if ($Unmanaged)
         {
-            if (!$_.Name.EndsWith("_managed.zip"))
+            if (!$_.Name.EndsWith("_managed.zip") -and !$_.Name.Equals($dataFileName))
             {
-                $solutionFile = $_
+                $solutionFileList.Add($_.FullName)
             }
         }
         else
         {
-            if (!$_.Name.Equals($dataFileName))
+            if ($_.Name.EndsWith("_managed.zip") -and !$_.Name.Equals($dataFileName))
             {
-                $solutionFile = $_
+                $solutionFileList.Add($_.FullName)
             }
         }
     }
 
-    $checkParams = @{
-        SolutionFile = $solutionFile.FullName
-        OutputPath = "$scriptPath\CheckerResults"
-        TenantId = "$TenantId"
-        ApplicationId = "$ApplicationId"
-        ApplicationSecret = "$ApplicationSecret"
-        PowerAppsCheckerPath = $crmCheckerPath
-        Ruleset = "Solution Checker"
-        Geography = "Europe"
-        SecondsBetweenChecks = 15
-        LocaleName = "en"
-        MaxStatusChecks = 25
+    foreach ($solutionFile in $solutionFileList) 
+    {
+        $folderName = [io.path]::GetFileNameWithoutExtension($solutionFile)
+        if (!(Test-Path "$scriptPath\CheckerResults\$folderName" -PathType Container)) {
+            New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults\$folderName"
+        }
+        $checkParams = @{
+            SolutionFile = $solutionFile
+            OutputPath = "$scriptPath\CheckerResults\$folderName"
+            TenantId = "$TenantId"
+            ApplicationId = "$ApplicationId"
+            ApplicationSecret = "$ApplicationSecret"
+            PowerAppsCheckerPath = $crmCheckerPath
+            Ruleset = "Solution Checker"
+            Geography = "Europe"
+            SecondsBetweenChecks = 15
+            LocaleName = "en"
+            MaxStatusChecks = 25
+        }
+        & "$frameworkPath\CheckSolution.ps1" @checkParams
     }
-
-    & "$frameworkPath\CheckSolution.ps1" @checkParams
 }
