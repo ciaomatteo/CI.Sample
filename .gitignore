@@ -6,6 +6,7 @@
 PowerShell/CheckerResults
 PowerShell/Tools
 PowerShell/Package/
+.sonarqube/
 
 # User-specific files
 *.rsuser
