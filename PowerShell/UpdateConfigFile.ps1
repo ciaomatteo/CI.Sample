@@ -40,6 +40,9 @@ foreach ($solutionFile in $solutionFileList)
     $xmlAtt = $XmlDocument.CreateAttribute("solutionpackagefilename")
     $xmlAtt.Value = $solutionFile
     $xmlSolutionConfig.Attributes.Append($xmlAtt)
+    $xmlAtt = $XmlDocument.CreateAttribute("requiredimportmode")
+    $xmlAtt.Value = "async"
+    $xmlSolutionConfig.Attributes.Append($xmlAtt)
     $XmlDocument.configdatastorage.SelectSingleNode("solutions").AppendChild($xmlSolutionConfig);
 }
 $XmlDocument.Save($XmlDocumentLoction)

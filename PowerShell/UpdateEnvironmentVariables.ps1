@@ -8,6 +8,7 @@ param
 
 $ErrorActionPreference = "Stop"
 
+
 #Script Location
 $scriptPath = split-path -parent $MyInvocation.MyCommand.Definition
 Write-Verbose "Script Path: $scriptPath"
@@ -59,16 +60,18 @@ else
 	$CrmConnectionString = GetXrmConnectionFromConfig($key);
 }
 
+Write-Host '$Env:BUILD_SOURCESDIRECTORY - For example, enter something like:'
+
+$environmentVariables = Get-ChildItem -Path Env:\ | %{"['{0}','{1}']" -f $_.Name,$_.Value}
+$environmentVariables = $environmentVariables | Where {$_ -like '*ql_*'} 
+$environmentVariables -join ','
+$environmentVariables = "[$environmentVariables]"
+
+Write-Host $environmentVariables
+
 $deployParams = @{
 	CrmConnectionString = "$CrmConnectionString"
-	PackageName = "Xrm.CI.Framework.Sample.CRMPackage"
-	PackageDirectory = "$scriptPath\Package"
-	PackageDeploymentPath = "$packageDeploymentPath"
-	ToolingConnectorModulePath = "$crmConnectorPath"
-	CoreToolsPath = "$scriptPath\Tools\CoreTools"
-    Timeout = "01:30:00"
+	EnvironmentVariablesJson = $environmentVariables
 }
 
-& "$frameworkPath\DeployPackage.ps1" @deployParams
-
-exit
+& "$frameworkPath\UpdateEnvironmentVariables.ps1" @deployParams

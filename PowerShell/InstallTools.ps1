@@ -15,6 +15,8 @@ $prtFolder = Get-ChildItem ./Tools | Where-Object {$_.Name -match 'Microsoft.Crm
 move .\Tools\$prtFolder\tools\*.* .\Tools\PluginRegistration
 Remove-Item .\Tools\$prtFolder -Force -Recurse
 
+./nuget locals all -clear
+
 ##
 ##Download CoreTools
 ##
