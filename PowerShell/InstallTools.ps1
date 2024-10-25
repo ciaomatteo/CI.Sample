@@ -49,7 +49,7 @@ Remove-Item .\Tools\$pdFolder -Force -Recurse
 ##Download XrmCIFramework PowerShell module
 ##
 ./nuget install XrmCIFramework -O .\Tools
-md -Force .\Tools\XrmCIFramework
+md .\Tools\XrmCIFramework
 $xrmCIFolder = Get-ChildItem ./Tools | Where-Object {$_.Name -match 'XrmCIFramework.'}
 move .\Tools\$xrmCIFolder\tools\*.* .\Tools\XrmCIFramework
 Remove-Item .\Tools\$xrmCIFolder -Force -Recurse
@@ -63,7 +63,15 @@ Remove-Item nuget.exe
 $PSVersionTable.PSVersion
 Install-PackageProvider -Name NuGet -Force
 
+
 Save-Package "microsoft.xrm.tooling.crmconnector.powershell" -Path .\Tools
+md .\Tools\CrmConnector
+$crmConnector = Get-ChildItem ./Tools | Where-Object {$_.Name -match 'CrmConnector.'}
+copy .\Tools\$crmConnector\*\*.* .\Tools\CrmConnector
+copy .\Tools\$crmConnector\*\*.* .\Tools\XrmCIFramework
+Remove-Item .\Tools\$crmConnector -Force -Recurse
+
+
 Save-Package "microsoft.xrm.tooling.packagedeployment.powershell" -Path .\Tools
 Save-Package "microsoft.xrm.tooling.configurationmigration" -Path .\Tools
 Save-Package "microsoft.powerApps.checker.powerShell" -Path .\Tools

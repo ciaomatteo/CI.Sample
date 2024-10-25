@@ -36,17 +36,6 @@ else
 	throw "PackageDeployment not found in tools folder"
 }
 
-$matches = Get-ChildItem -Path "$scriptPath\Tools\Microsoft.Xrm.Tooling.CrmConnector.PowerShell\*" | Sort-Object Name -Descending
-if ($matches.Length -gt 0)
-{
-	$crmConnectorPath = $matches[0].FullName
-	Write-Verbose "Using CrmConnector: $crmConnectorPath"
-}
-else
-{
-	throw "CrmConnector not found in tools folder"
-} 
-
 Import-Module "$frameworkPath\Xrm.Framework.CI.PowerShell.Cmdlets.psd1"
 
 if ($CrmConnectionString)

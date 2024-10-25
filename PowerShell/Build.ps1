@@ -168,4 +168,49 @@ else
     & .\UpdateConfigFile.ps1 -Solutions $Solutions
 }
 
-exit
+if ($TenantId -and $ApplicationId -and $ApplicationSecret)
+{
+    if (!(Test-Path "$scriptPath\CheckerResults" -PathType Container)) {
+        New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults"
+    }
+
+    $solutionFileList = New-Object Collections.Generic.List[String]
+    $matches = Get-ChildItem -Path "$scriptPath\Package\PkgFolder" -Filter *.zip | ForEach-Object {
+        if ($Unmanaged)
+        {
+            if (!$_.Name.EndsWith("_managed.zip") -and !$_.Name.Equals($dataFileName))
+            {
+                $solutionFileList.Add($_.FullName)
+            }
+        }
+        else
+        {
+            if ($_.Name.EndsWith("_managed.zip") -and !$_.Name.Equals($dataFileName))
+            {
+                $solutionFileList.Add($_.FullName)
+            }
+        }
+    }
+
+    foreach ($solutionFile in $solutionFileList) 
+    {
+        $folderName = [io.path]::GetFileNameWithoutExtension($solutionFile)
+        if (!(Test-Path "$scriptPath\CheckerResults\$folderName" -PathType Container)) {
+            New-Item -ItemType Directory -Force -Path "$scriptPath\CheckerResults\$folderName"
+        }
+        $checkParams = @{
+            SolutionFile = $solutionFile
+            OutputPath = "$scriptPath\CheckerResults\$folderName"
+            TenantId = "$TenantId"
+            ApplicationId = "$ApplicationId"
+            ApplicationSecret = "$ApplicationSecret"
+            PowerAppsCheckerPath = $crmCheckerPath
+            Ruleset = "Solution Checker"
+            Geography = "Europe"
+            SecondsBetweenChecks = 15
+            LocaleName = "en"
+            MaxStatusChecks = 25
+        }
+        & "$frameworkPath\CheckSolution.ps1" @checkParams
+    }
+}
