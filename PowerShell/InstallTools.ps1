@@ -74,4 +74,4 @@ Remove-Item .\Tools\$crmConnector -Force -Recurse
 
 Save-Package "microsoft.xrm.tooling.packagedeployment.powershell" -Path .\Tools
 Save-Package "microsoft.xrm.tooling.configurationmigration" -Path .\Tools
-Save-Package "microsoft.powerApps.checker.powerShell" -Path .\Tools
+Save-Package "microsoft.powerApps.checker.powerShell" -RequiredVersion 1.0.29 -Path .\Tools
